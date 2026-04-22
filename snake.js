@@ -74,11 +74,42 @@ if (snakeBody.length) {
         context.fillRect(snakeBody[i][0], snakeBody[i][1], blockSize, blockSize);
     }
     
+    function HandleRestart(e) {
+        var rect = board.getBoundingClientRect();
+        var clickX = e.clientX - rect.left; 
+        var clickY = e.clientY - rect.top;  
+
+        if (
+            clickX >= board.width / 3 && clickX <= board.width / 3 + 160 &&
+            clickY >= board.height / 1.5 && clickY <= board.height / 1.5 + 30
+        ) {
+            // Reset game state
+            snakeX = blockSize * 5;
+            snakeY = blockSize * 5;
+            velocityX = 0;
+            velocityY = 0;
+            snakeBody = [];
+            score = 0;
+            gameOver = false;
+            placeFood();
+        }
+    }
+    
     function showGameOver() {
         context.fillStyle = "blue";
         context.font = "50px Arial";
         context.fillText("GAME OVER", board.width / 5.5, board.height / 2);
+
+        //restart button
+        context.fillStyle = "green";
+        context.fillRect(board.width / 3, board.height / 1.5, 160, 30);
+        context.fillStyle = "black";
+        context.font = "20px Arial";
+        context.fillText("RESTART", board.width / 2.5, board.height / 1.4); 
+
+    board.addEventListener("click", HandleRestart);
     }   
+
  //game over conditions
  if (snakeX < 0 || snakeX > cols*blockSize || snakeY < 0 || snakeY > rows*blockSize) {
     gameOver = true;
