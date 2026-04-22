@@ -22,6 +22,9 @@ var foodY;
 //gameover reset
 var gameOver = false
 
+//score counter
+var score = 0;
+
 window.onload = function() {
     board = document.getElementById("board");
     board.height = rows * blockSize;
@@ -38,14 +41,20 @@ function update() {
     if (gameOver) {
         return;
     }
+   
 
     context.fillStyle="black";
     context.fillRect(0, 0, board.width, board.height);
+
+    context.fillStyle="white";
+    context.font = "20px pixel";
+    context.fillText("Score: " + score, 10, 25);    
 
     context.fillStyle="red";
     context.fillRect(foodX, foodY, blockSize, blockSize);
 
     if (snakeX == foodX && snakeY == foodY) {
+        score++;
         snakeBody.push([foodX, foodY])
         placeFood();
     }
@@ -64,15 +73,21 @@ if (snakeBody.length) {
     for(let i = 0; i < snakeBody.length; i++) {
         context.fillRect(snakeBody[i][0], snakeBody[i][1], blockSize, blockSize);
     }
+    
+    function showGameOver() {
+        context.fillStyle = "blue";
+        context.font = "50px Arial";
+        context.fillText("GAME OVER", board.width / 5.5, board.height / 2);
+    }   
  //game over conditions
  if (snakeX < 0 || snakeX > cols*blockSize || snakeY < 0 || snakeY > rows*blockSize) {
     gameOver = true;
-    alert("Game Over");
+    showGameOver();
  }
    for (let i = 0; i <snakeBody.length; i++) {
     if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]){
         gameOver = true;
-        alert ("Game Over")
+        showGameOver();
     }
    }
 }
@@ -96,6 +111,7 @@ function changeDirection(e) {
     }
 
 }
+
 
 
 function placeFood() {
