@@ -25,6 +25,8 @@ var gameOver = false
 //score counter
 var score = 0;
 
+
+
 window.onload = function() {
     board = document.getElementById("board");
     board.height = rows * blockSize;
@@ -57,6 +59,7 @@ function update() {
         score++;
         snakeBody.push([foodX, foodY])
         placeFood();
+        playEatSound(); 
     }
 
 for (let i = snakeBody.length-1; i > 0; i--) {
@@ -113,17 +116,21 @@ if (snakeBody.length) {
  //game over conditions
  if (snakeX < 0 || snakeX > cols*blockSize || snakeY < 0 || snakeY > rows*blockSize) {
     gameOver = true;
+    playGameOverSound();
     showGameOver();
  }
    for (let i = 0; i <snakeBody.length; i++) {
     if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]){
         gameOver = true;
+        playGameOverSound();
         showGameOver();
     }
    }
 }
 
 function changeDirection(e) {
+
+
     if (e.code == "ArrowUp" && velocityY != 1) {
          velocityX = 0;
          velocityY = -1;
@@ -140,7 +147,8 @@ function changeDirection(e) {
          velocityX = 1;
          velocityY = 0;
     }
-
+    
+   
 }
 
 
@@ -149,4 +157,46 @@ function placeFood() {
     //Math.random brings 0.1) *cols -> (0-.19.9999) -> (0-19) * 25
     foodX = Math.floor(Math.random() * cols) * blockSize;
     foodY = Math.floor(Math.random() * rows) * blockSize;
+}
+
+
+function playEatSound() {
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    var oscillator = audioCtx.createOscillator();
+    var gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.type = "square";
+    oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);         // start note
+    oscillator.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);   // jump up
+    
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);                // volume
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2); // fade out
+    
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + 0.2);
+}
+
+function playGameOverSound() {
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+    
+    var oscillator = audioCtx.createOscillator();
+    var gainNode = audioCtx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.type = "sawtooth";
+    oscillator.frequency.setValueAtTime(220, audioCtx.currentTime);         // start note
+    oscillator.frequency.setValueAtTime(110, audioCtx.currentTime + 0.1);   // jump down  
+    oscillator.frequency.setValueAtTime(55, audioCtx.currentTime + 0.2);    // jump down again
+
+    gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5); // fade out
+
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + 0.5);         
 }
