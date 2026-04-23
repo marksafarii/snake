@@ -69,10 +69,30 @@ if (snakeBody.length) {
     snakeBody[0] = [snakeX, snakeY];
 }
 
+snakeX += velocityX * blockSize;
+snakeY += velocityY * blockSize;
+
+ //walls
+
+    if (snakeX < 0 ) snakeX = (cols - 1) * blockSize;
+    else if ( snakeX >= cols * blockSize) snakeX = 0;
+
+    if (snakeY < 0) snakeY = (rows -1) * blockSize;
+    else if (snakeY >= rows * blockSize) snakeY = 0; 
+
+     for (let i = 0; i <snakeBody.length; i++) {
+    if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]){
+        gameOver = true;
+        playGameOverSound();
+        showGameOver();
+    }
+   }
+
+ 
     context.fillStyle="lime";
-    snakeX += velocityX * blockSize;
-    snakeY += velocityY * blockSize;
-    context.fillRect(snakeX, snakeY, blockSize, blockSize);
+    context.fillRect(snakeX, snakeY, blockSize, blockSize); 
+
+
     for(let i = 0; i < snakeBody.length; i++) {
         context.fillRect(snakeBody[i][0], snakeBody[i][1], blockSize, blockSize);
     }
@@ -113,20 +133,9 @@ if (snakeBody.length) {
     board.addEventListener("click", HandleRestart);
     }   
 
- //game over conditions
- if (snakeX < 0 || snakeX > cols*blockSize || snakeY < 0 || snakeY > rows*blockSize) {
-    gameOver = true;
-    playGameOverSound();
-    showGameOver();
+
  }
-   for (let i = 0; i <snakeBody.length; i++) {
-    if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]){
-        gameOver = true;
-        playGameOverSound();
-        showGameOver();
-    }
-   }
-}
+  
 
 function changeDirection(e) {
 
